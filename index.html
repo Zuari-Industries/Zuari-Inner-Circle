@@ -1,1238 +1,970 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inner Circle - Exclusive Membership</title>
+    <title>Zuari Finserv - Your First Step into Investing</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Google Font (Montserrat) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN - Removed as it requires React and was causing an error. Icons are inline SVGs. -->
+    <!-- <script src="https://unpkg.com/lucide-react@0.294.0/dist/umd/lucide-react.min.js"></script> -->
+
     <style>
-        /* --- CORE THEME STYLES --- */
+        /* Base styles */
         body {
-            background-color: #121212;
-            color: #E0E0E0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #111111; /* Dark background */
+            /* Subtle dotted pattern */
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 15px 15px;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        /* Custom Scrollbar Styles */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #1E1E1E; }
-        ::-webkit-scrollbar-thumb {
-            background-color: #CFB53B;
-            border-radius: 20px;
-            border: 2px solid #1E1E1E;
+        /* Custom color classes (if Tailwind defaults aren't exact) */
+        .text-gold {
+            color: #D4AF37; /* A rich gold color */
         }
-        ::-webkit-scrollbar-thumb:hover { background-color: #E0C95C; }
-        html {
-            scrollbar-width: thin;
-            scrollbar-color: #CFB53B #1E1E1E;
-        }
-
-        .font-serif { font-family: 'Playfair Display', serif; }
-        .hero-bg {
-            background-color: #1A1A1A;
-            background-image:
-                radial-gradient(circle at 10% 10%, rgba(207, 181, 59, 0.05) 0%, transparent 30%),
-                radial-gradient(circle at 80% 90%, rgba(207, 181, 59, 0.05) 0%, transparent 30%);
-        }
-        .gold-text { color: #CFB53B; }
-        .gold-bg { background-color: #CFB53B; }
-        .gold-border { border-color: #CFB53B; }
         
-        .card {
-            background-color: #1E1E1E;
-            border: 1px solid #333;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border-color: #CFB53B;
+        .bg-gold {
+            background-color: #D4AF37;
         }
 
-        .accordion-item .accordion-content {
+        .border-gold {
+            border-color: #D4AF37;
+        }
+        
+        .hover-bg-gold-dark:hover {
+            background-color: #c09b2e;
+        }
+
+        /* For the testimonial card - using Tailwind's amber as it's very close */
+        
+        /* FAQ Accordion toggle */
+        .faq-item .faq-answer {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
-        .accordion-item.open .accordion-button svg { transform: rotate(180deg); }
         
-        .btn-gold { transition: all 0.3s ease; }
-        .btn-gold:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(207, 181, 59, 0.2);
+        .faq-item.open .faq-answer {
+            max-height: 200px; /* Adjust as needed */
+            /* margin-top: 1rem; -- REMOVED FOR SMOOTHER TRANSITION */
         }
         
-        .fade-in {
+        .faq-item .icon-plus {
+            display: block;
+        }
+        .faq-item .icon-minus {
+            display: none;
+        }
+        
+        .faq-item.open .icon-plus {
+            display: none;
+        }
+        .faq-item.open .icon-minus {
+            display: block;
+        }
+
+        /* Custom Amber Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111111; /* Body background color */
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #facc15; /* amber-400 */
+            border-radius: 20px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #eab308; /* amber-500 */
+        }
+        /* For Firefox */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #facc15 #111111;
+        }
+
+        /* --- Journey Steps Premium Glow Animation --- */
+        @keyframes premiumGlow {
+          0%, 100% {
+            box-shadow: 0 0 0px rgba(250, 204, 21, 0);
+          }
+          50% {
+            box-shadow: 0 0 25px 8px rgba(250, 204, 21, 0.5); /* #facc15 at 50% opacity */
+          }
+        }
+
+        /* Base state for journey steps */
+        .journey-step-circle,
+        .journey-step-text {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
-        .fade-in.visible {
+
+        /* Active state to be added by JS */
+        .journey-step.is-active .journey-step-circle {
+            opacity: 1;
+            transform: translateY(0);
+            /* Apply the glow animation *after* the fade-in */
+            animation: premiumGlow 1.2s ease-in-out 1;
+        }
+        
+        /* When parent is activated, fade in text (with a slight delay) */
+        .journey-step.is-active .journey-step-text {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s; /* Premium delay */
+        }
+        /* --- End of Journey CSS --- */
+
+        /* --- Premium Section Scroll Animation --- */
+        .scroll-animate-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        /* This class will be added by JS */
+        .scroll-animate-section.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        /* --- FORM STYLES --- */
-        .form-input, .otp-input, .calc-input {
-            color: #E0E0E0;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease-in-out;
-            border-radius: 0.5rem;
-        }
-        .form-input::placeholder, .calc-input::placeholder { color: #777; }
-        .form-input:focus, .otp-input:focus, .calc-input:focus {
-            border-color: #CFB53B;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(207, 181, 59, 0.2);
-            outline: none;
-        }
-        .otp-input { text-align: center; }
-        
-        .form-step { display: none; transition: opacity 0.4s ease-in-out; opacity: 0; }
-        .form-step.active { display: block; opacity: 1; }
-        
-        #toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            z-index: 9999;
-            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-        #toast.show { top: 200px; }
-        
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-        .shake {
-            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
-        }
-        
-        /* MODAL AND POPUP STYLES */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-overlay.open { opacity: 1; visibility: visible; }
-        .modal-content {
-            background-color: #1A1A1A;
-            border: 2px solid #CFB53B;
-            border-radius: 1rem;
-            padding: 2rem;
-            width: 90%;
-            max-width: 560px;
-            text-align: center;
-            transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
-            position: relative;
-        }
-        .modal-overlay.open .modal-content { transform: scale(1); }
+        /* --- End of Section Scroll CSS --- */
 
-        /* VIDEO PLACEHOLDER */
-        .video-placeholder {
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            background: #000 url('https://placehold.co/1280x720/000000/FFFFFF?text=Play+Video') center center/cover;
-        }
-        .video-placeholder .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background-color: rgba(207, 181, 59, 0.8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .video-placeholder:hover .play-button {
-            background-color: #CFB53B;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        /* CALCULATOR STYLES */
-        .calc-btn-group button { transition: all 0.2s ease-in-out; }
-        .calc-btn-group button.active {
-            background-color: #CFB53B;
-            color: #121212;
-            font-weight: bold;
-        }
-        .tab-btn.active {
-            border-color: #CFB53B;
-            background-color: #2a2a2a;
-        }
-
-        /* D3 Chart Styles */
-        .chart-container .axis .domain {
-            stroke: #444;
-        }
-        .chart-container .axis .tick line {
-            stroke: #444;
-        }
-        .chart-container .axis .tick text {
-            fill: #888;
-            font-size: 12px;
-        }
-        .chart-container .grid line {
-            stroke: #2a2a2a;
-            stroke-opacity: 0.7;
-            shape-rendering: crispEdges;
-        }
-        .chart-tooltip {
-            position: absolute;
-            text-align: center;
-            padding: 8px;
-            font-size: 12px;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .hover-line {
-            stroke: #CFB53B;
-            stroke-width: 1px;
-            stroke-dasharray: 3,3;
-        }
-        .hover-circle {
-            fill: #CFB53B;
-        }
-
-
-         /* Gift Icon Animation */
-         .gift-icon-container {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            cursor: pointer;
-            z-index: 1;
-        }
-        .gift-icon-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(207, 181, 59, 0.7) 0%, rgba(207, 181, 59, 0) 70%);
-            animation: treasure-shine 3.5s infinite cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: -1;
-        }
-        
-        @keyframes treasure-shine {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            40% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.7; }
-            100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
-        }
-
-        /* Journey Line Animation */
-        @keyframes draw {
-            to { stroke-dashoffset: 0; }
-        }
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(207, 181, 59, 0.4); }
-            50% { box-shadow: 0 0 35px rgba(207, 181, 59, 0.9), 0 0 15px rgba(207, 181, 59, 0.6) inset; }
-        }
-
-        #journey-line-1, #journey-line-2, #journey-line-3 {
-            stroke-dashoffset: 1;
-            stroke-dasharray: 1;
-        }
-
-        #journey-section.is-visible #journey-line-1 {
-            animation: draw 1s 0.2s ease-out forwards;
-        }
-        #journey-section.is-visible #journey-line-2 {
-            animation: draw 1s 1.2s ease-out forwards;
-        }
-        #journey-section.is-visible #journey-line-3 {
-            animation: draw 1s 2.2s ease-out forwards;
-        }
-
-        #journey-section.is-visible .journey-step .w-16 {
-            animation-name: none;
-        }
-        #journey-section.is-visible .journey-step:nth-child(1) .w-16 {
-            animation: glow 1.5s ease-in-out forwards;
-        }
-        #journey-section.is-visible .journey-step:nth-child(2) .w-16 {
-            animation: glow 1.5s 1s ease-in-out forwards;
-        }
-        #journey-section.is-visible .journey-step:nth-child(3) .w-16 {
-            animation: glow 1.5s 2s ease-in-out forwards;
-        }
-        #journey-section.is-visible .journey-step:nth-child(4) .w-16 {
-            animation: glow 1.5s 3s ease-in-out forwards;
-        }
     </style>
 </head>
 <body class="antialiased">
-    
-    <div id="toast" class="py-3 px-6 rounded-lg shadow-xl"><span id="toast-message"></span></div>
 
-    <!-- Exit Intent Popup -->
-    <div id="exit-intent-modal" class="modal-overlay">
-        <div class="modal-content">
-             <h3 class="font-serif text-3xl gold-text mb-4">⚠️ Before You Go...</h3>
-             <p class="text-gray-300 mb-6 text-lg">You're leaving behind:</p>
-             <ul class="text-left space-y-3 mb-8">
-                <li class="flex items-center"><span class="text-green-400 mr-3">✔</span> ₹1.2L annual company matching</li>
-                <li class="flex items-center"><span class="text-green-400 mr-3">✔</span> Free RM worth ₹50K/year</li>
-                <li class="flex items-center"><span class="text-green-400 mr-3">✔</span> Exclusive masterclass access</li>
-             </ul>
-             <p class="text-gray-400 text-sm mb-6">It takes 30 seconds to enroll.</p>
-             <div class="flex flex-col sm:flex-row gap-4">
-                <button id="claim-benefits-btn" class="gold-bg text-black font-bold w-full py-3 px-4 rounded-full btn-gold text-lg">Claim My Benefits</button>
-                <button id="exit-anyway-btn" class="bg-gray-700 text-white font-bold w-full py-3 px-4 rounded-full hover:bg-gray-600 transition-colors">Exit Anyway</button>
-             </div>
-        </div>
-    </div>
+    <!-- Wrapper for all content -->
+    <div class="relative w-full min-h-screen">
 
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-30 backdrop-blur-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-semibold gold-text font-serif">The Inner Circle</h1>
-            <a href="#register" class="px-5 py-2 text-black gold-bg rounded-full font-bold btn-gold">Join Now</a>
-        </div>
-    </header>
+        <!-- Header / Navbar -->
+        <header class="sticky top-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-sm shadow-md">
+            <div class="container mx-auto max-w-6xl px-6 py-6">
+                <nav class="flex items-center justify-between">
+                    <!-- Logo -->
+                    <a href="#" class="flex items-center space-x-2">
+                        <!-- 
+                            Replaced SVG with IMG tag. 
+                            Just add your logo's file path to the src="" attribute.
+                            The w-6 h-6 (24px) and object-contain classes will ensure
+                            it keeps the same size and proportions as the original SVG.
+                        -->
+                        <img src="Images/ZMLOGO-inverted.webp" alt="Zuari Finserv Logo" class="w-[10rem] h-[3rem] object-contain">
 
-    <main id="home">
-        <!-- Section 1: Hero -->
-        <section class="hero-bg min-h-screen flex flex-col items-center justify-center text-center p-6 pt-24 md:pt-20">
-            <div class="grid md:grid-cols-2 gap-10 max-w-7xl w-full text-left md:text-center mt-auto md:mt-0 items-center justify-center">
-                <!-- Left Column -->
-                <div class="max-w-2xl mx-auto md:text-left fade-in">
-                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif font-extrabold text-white leading-tight">
-                        Welcome to the <span class="gold-text">Inner Circle</span> — Your Exclusive Gateway to Wealth & Wisdom.
-                    </h2>
-                    <p class="mt-6 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-                        Zuari Finserv investing directly in your family's future. Exclusive to employees.
-                    </p>
-                </div>
+                        
+                        <!-- <span class="text-xl font-bold text-white">ZUARI <span class="text-amber-400">FINSERV</span></span> -->
+                    </a>
 
-                <!-- Right Column: Enrollment Card -->
-                 <div id="register" class="relative bg-gray-900 bg-opacity-50 p-6 rounded-2xl border gold-border shadow-2xl shadow-yellow-500/10 w-full max-w-md mx-auto fade-in self-center" style="transition-delay: 200ms;">
-                    <div class="flex justify-center mb-4">
-                        <div class="gift-icon-container">
-                             <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path d="M50 20L65 35L35 35Z" fill="#CFB53B"></path><path d="M30 25L70 25L50 10Z" fill="#CFB53B" opacity="0.8"></path></g><g><path d="M15 35L85 35V85H15V35Z" fill="#E0C95C"></path><path d="M15 85H85L70 95H30L15 85Z" fill="#CFB53B"></path></g><g><path d="M45 20H55V85H45V20Z" fill="#A58A2B"></path><path d="M15 55H85V45H15V55Z" fill="#A58A2B"></path></g><g><path d="M50 10C60 20 50 30 50 30C40 20 50 10 50 10Z" fill="#CFB53B" stroke="#A58A2B" stroke-width="1"></path></g></svg>
+                    <!-- Nav Links -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">About Us</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">Journey</a>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="#form-section" class="bg-amber-400 text-gray-900 font-semibold px-6 py-2.5 rounded-lg shadow-lg hover:bg-amber-300 transition-all">
+                        Let's Get Started
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            
+            <!-- Section 1: Hero -->
+            <section class="scroll-animate-section relative flex items-center min-h-[40vh]">
+                <div class="container mx-auto max-w-6xl px-6 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                        <!-- Left Content -->
+                        <div class="text-center md:text-left">
+                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+                                Your First Step into Investing
+                                <span class="block text-amber-400">Funded by Us.</span>
+                            </h1>
+                            <p class="mt-6 text-lg text-gray-300 max-w-lg mx-auto md:mx-0">
+                                At Zuari Inner Circle, We Help You Start Your Investing Journey With Your First SIP On Us.
+                            </p>
+                            <a href="#journey-section" class="mt-10 inline-flex items-center space-x-2 bg-amber-400 text-gray-900 font-semibold px-8 py-3.5 rounded-lg shadow-lg hover:bg-amber-300 transition-all">
+                                <span>Take The Next Step</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                        </div>
+                        
+                        <!-- Right Image -->
+                        <div class="flex justify-center">
+                            <div class="bg-gray-800 p-2 rounded-xl shadow-2xl border-2 border-amber-400 w-full max-w-sm overflow-hidden">
+                                <!-- Replaced image with video tag -->
+                                <video 
+                                      class="rounded-lg object-cover w-full h-full"
+                                      loop 
+                                      muted 
+                                      playsinline 
+                                      controls
+                                      poster="https://placehold.co/400x450/333/FFF?text=Mr.+Athar+Shahab"
+                                      src="">
+                                      <!-- Add your video source here, e.g., src="videos/athar-shahab.mp4" -->
+                                      Your browser does not support the video tag.
+                                </video>
+                                <div class="mt-3 text-center">
+                                    <p class="font-bold text-white">Mr. Athar Shahab</p>
+                                    <p class="text-sm text-gray-400">MD, Zuari Industries Ltd</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                     <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-left mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">✨</span>
-                            <span class="font-semibold text-sm whitespace-nowrap">Double First SIP</span>
+                </div>
+            </section>
+
+            <!-- Section 2: What's Zuari Inner Circle? -->
+            <section class="scroll-animate-section min-h-[60vh] bg-black bg-opacity-20 flex items-center">
+                <div class="container mx-auto max-w-6xl px-6 py-12 text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        What's <span class="text-amber-400">Zuari Inner Circle?</span>
+                    </h2>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-16">
+                        A guided space to simplify your mutual fund and SIP journey. Learn from experts, get personal support, and access easy tools that help you invest with confidence. And yes — your first SIP is on us.
+                    </p>
+                    
+                    <!-- 4-Column Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <!-- Card 1 -->
+                        <div class="bg-gray-800 bg-opacity-70 p-8 rounded-2xl shadow-lg border-2 border-amber-400 text-left transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-400/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gift mb-4"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7Z"/></svg>
+                            <h3 class="text-xl font-semibold mb-2">Your First SIP — On Us</h3>
+                            <p class="text-gray-300">Zuari Finserv funds your first SIP — because confidence begins with the first step.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">📞</span>
-                            <span class="font-semibold text-sm whitespace-nowrap">RM within 24 hrs</span>
+                        <!-- Card 2 -->
+                        <div class="bg-gray-800 bg-opacity-70 p-8 rounded-2xl shadow-lg border-2 border-amber-400 text-left transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-400/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users mb-4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <h3 class="text-xl font-semibold mb-2">Dedicated Relationship Manager</h3>
+                            <p class="text-gray-300">A real person, not a chatbot — guiding you at every step.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">💰</span>
-                            <span class="font-semibold text-sm whitespace-nowrap">Zero Fees</span>
+                        <!-- Card 3 -->
+                        <div class="bg-gray-800 bg-opacity-70 p-8 rounded-2xl shadow-lg border-2 border-amber-400 text-left transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-400/20">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap mb-4"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.084a1 1 0 0 0-.019 1.838l9.401 3.91a2 2 0 0 0 1.66 0l9.401-3.91Z"/><path d="M22 10v6"/><path d="m22 17-10 4-10-4"/><path d="M6 12v5.73a1 1 0 0 0 .5 1.73l5 2.5a1 1 0 0 0 1 0l5-2.5A1 1 0 0 0 18 17.73V12"/></svg>
+                            <h3 class="text-xl font-semibold mb-2">Masterclasses With Experts</h3>
+                            <p class="text-gray-300">Learn how money really works — from people who make it work.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">🎓</span>
-                            <span class="font-semibold text-sm whitespace-nowrap">Masterclass</span>
+                        <!-- Card 4 -->
+                        <div class="bg-gray-800 bg-opacity-70 p-8 rounded-2xl shadow-lg border-2 border-amber-400 text-left transition-all duration-300 ease-in-out hover:scale-[1.03] hover:shadow-xl hover:shadow-amber-400/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-check mb-4"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                            <h3 class="text-xl font-semibold mb-2">Workshops & More</h3>
+                            <p class="text-gray-300">Learn, plan, and invest smarter — one small action at a time.</p>
                         </div>
                     </div>
                     
-                    <hr class="my-4 border-gray-600">
-
-                    <!-- Form Container -->
-                    <div id="main-form-container">
-                        <h2 class="font-serif text-lg sm:text-xl font-bold text-center text-white mb-4">Membership Registration</h2>
+                    <a href="#form-section" class="mt-16 inline-block bg-amber-400 text-gray-900 font-semibold px-10 py-3.5 rounded-lg shadow-lg hover:bg-amber-300 transition-all">
+                        I'm Ready To Start
+                    </a>
+                </div>
+            </section>
+            
+            <!-- Section 3: Your Journey to Growth -->
+            <section class="scroll-animate-section py-24" id="journey-section">
+                <div class="container mx-auto max-w-6xl px-6 text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-20">
+                        Your Journey to <span class="text-amber-400">Growth</span>
+                    </h2>
+                    
+                    <!-- Timeline -->
+                    <div class="relative">
+                        <!-- Connecting Line (Hidden on mobile, block on md and up) -->
+                        <div class="hidden md:block absolute left-0 right-0 top-5 h-1 bg-gray-700 w-10/12 mx-auto"></div>
                         
-                        <div id="step-container" class="relative min-h-[160px]">
-                            <!-- Step 1: Email -->
-                            <div id="step1" class="form-step">
-                                <div class="mb-2"><label for="email" class="block text-sm font-medium mb-1 text-gray-300 sr-only">Official Email</label><input id="email" type="email" placeholder="you@zuarifinserv.com" class="form-input mt-1 block w-full px-3 py-2.5 text-base" aria-invalid="false" aria-describedby="email-error"><p id="email-error" class="text-red-400 text-xs mt-1 h-4"></p></div>
-                                <button id="sendOtpBtn" class="gold-bg text-black font-bold w-full flex items-center justify-center py-2.5 px-4 rounded-full disabled:opacity-50 mt-3 btn-gold text-base"><span class="btn-text">Request Access</span></button>
+                        <!-- Steps -->
+                        <div class="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+                            
+                            <!-- Step 1 -->
+                            <div class="journey-step relative flex flex-col items-center text-center">
+                                <div class="journey-step-circle relative z-10 w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center border-4 border-gray-900">
+                                    <span class="text-gray-900 font-bold">1</span>
+                                </div>
+                                <div class="journey-step-text">
+                                    <h3 class="text-xl font-semibold mt-6 mb-2">Enroll in the Zuari Inner Circle</h3>
+                                    <p class="text-gray-300">Join a guided program that helps you start your mutual fund and SIP journey the right way.</p>
+                                </div>
                             </div>
-
-                            <!-- Step 2: OTP -->
-                            <div id="step2" class="form-step">
-                                <div class="mb-3"><label class="block text-sm font-medium text-center mb-2 text-gray-300">Enter 6-Digit OTP</label><div id="email-otp-inputs" class="flex justify-center space-x-2"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"><input type="text" maxlength="1" class="otp-input email-otp" style="width: 2.5rem; height: 3rem; font-size: 1.25rem;"></div><p id="emailOtpInfo" class="text-sm text-red-400 text-center h-5 mt-2"></p></div>
-                                <button id="verifyOtpBtn" class="gold-bg text-black font-bold w-full flex items-center justify-center py-2.5 px-4 rounded-full disabled:opacity-50 btn-gold text-base"><span class="btn-text">Verify & Join</span></button>
-                                <div class="text-center mt-2 text-xs text-gray-400"><button id="resendOtpBtn" class="gold-text hover:underline disabled:opacity-50" disabled>Didn't receive? Resend</button></div>
+                            
+                            <!-- Step 2 -->
+                            <div class="journey-step relative flex flex-col items-center text-center">
+                                <div class="journey-step-circle relative z-10 w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center border-4 border-gray-900">
+                                    <span class="text-gray-900 font-bold">2</span>
+                                </div>
+                                <div class="journey-step-text">
+                                    <h3 class="text-xl font-semibold mt-6 mb-2">Connect with Your Relationship Manager</h3>
+                                    <p class="text-gray-300">Get one-on-one guidance from a real expert who helps you plan every step with confidence.</p>
+                                </div>
                             </div>
-
-                            <!-- Step 3: Success -->
-                             <div id="success-screen" class="form-step text-center px-4 py-2">
-                                <h2 class="font-serif text-2xl font-bold text-white">🎉 Welcome!</h2>
-                                <p class="text-gray-300 mt-2 text-sm">You're in the Inner Circle. Here's what's next:</p>
-                                <ul class="text-left text-sm space-y-1.5 mt-3 text-gray-400">
-                                    <li><span class="text-green-400">✓</span> Welcome kit in your inbox</li>
-                                    <li><span class="text-green-400">✓</span> RM call within 24 hours</li>
-                                    <li><span class="text-green-400">✓</span> Masterclass invite on the way</li>
-                                </ul>
-                                <button id="success-close-btn" class="mt-4 text-sm gold-text hover:underline">Close</button>
+                            
+                            <!-- Step 3 -->
+                            <div class="journey-step relative flex flex-col items-center text-center">
+                                <div class="journey-step-circle relative z-10 w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center border-4 border-gray-900">
+                                    <span class="text-gray-900 font-bold">3</span>
+                                </div>
+                                <div class="journey-step-text">
+                                    <h3 class="text-xl font-semibold mt-6 mb-2">Start Your First SIP Funded by Zuari Finserv</h3>
+                                    <p class="text-gray-300">We cover your first SIP to help you take that confident first step toward investing.</p>
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Section 2: Wealth Calculator -->
-        <section class="py-16 md:py-24 bg-black">
-            <div class="container mx-auto px-6 text-center">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">See Your Future Wealth</h3>
-                <div class="max-w-4xl mx-auto mt-12 fade-in" style="transition-delay: 200ms;">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-8">
+            </section>
+            
+            <!-- Section 4: What's Mutual Fund? -->
+            <section class="scroll-animate-section py-24 bg-black bg-opacity-20">
+                <div class="container mx-auto max-w-6xl px-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <!-- Left Content -->
                         <div>
-                            <label for="monthly-sip" class="block text-lg font-medium text-gray-300 mb-2">Monthly SIP</label>
-                            <input id="monthly-sip" type="number" placeholder="e.g., 5000" class="calc-input w-full text-center text-xl p-3" value="5000">
+                            <div class="mb-12">
+                                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                                    What's <span class="text-amber-400">Mutual Fund?</span>
+                                </h2>
+                                <p class="text-lg text-gray-300">
+                                    It's a simple and smart way for investors to pool their money in mutual funds, managed by experts to grow wealth over time.
+                                </p>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                                    What's <span class="text-amber-400">Systematic Investment Plan?</span>
+                                </h2>
+                                <p class="text-lg text-gray-300">
+                                    It's a simple and disciplined way to invest in mutual funds, where you invest a fixed amount regularly (like monthly) instead of a lump sum — helping you build wealth gradually over time.
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                             <label class="block text-lg font-medium text-gray-300 mb-2">Investment Period (Years)</label>
-                             <div id="investment-years" class="grid grid-cols-4 gap-2 rounded-lg bg-gray-800 p-1 calc-btn-group">
-                                <button class="p-2 rounded-md" data-years="5">5</button>
-                                <button class="p-2 rounded-md active" data-years="10">10</button>
-                                <button class="p-2 rounded-md" data-years="15">15</button>
-                                <button class="p-2 rounded-md" data-years="20">20</button>
+                        
+                        <!-- Right Video Player (Playlist Style) -->
+                        <div class="flex flex-col bg-gray-900 border-2 border-amber-400 rounded-2xl overflow-hidden min-h-[400px]">
+                             
+                             <!-- Main Video Display -->
+                             <video 
+                                 id="main-video"
+                                 class="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
+                                 loop 
+                                 muted 
+                                 playsinline
+                                 controls
+                                 poster="https://placehold.co/600x400/333/FFF?text=Video+1:+What+is+a+Mutual+Fund"
+                                 src="">
+                                 <!-- 
+                                    Src and Poster are now controlled by JS. 
+                                    Default values above are for the first video.
+                                 -->
+                                 Your browser does not support the video tag.
+                             </video>
+
+                             <!-- Video Playlist -->
+                             <div class="bg-gray-800 border-t-2 border-amber-400">
+                                <!-- Video 1 Button -->
+                                <button 
+                                    class="video-select-btn w-full text-left p-4 transition-colors active-video-btn bg-amber-400 text-gray-900 font-semibold" 
+                                    data-poster="https://placehold.co/600x400/333/FFF?text=Video+1:+What+is+a+Mutual+Fund"
+                                    data-src="">
+                                    <span class="block text-lg">Video 1: What is a Mutual Fund?</span>
+                                </button>
+                                <!-- Video 2 Button -->
+                                <button 
+                                    class="video-select-btn w-full text-left p-4 transition-colors hover:bg-gray-700" 
+                                    data-poster="https://placehold.co/600x400/444/FFF?text=Video+2:+What+is+an+SIP"
+                                    data-src="">
+                                    <span class="block text-lg">Video 2: What is an SIP?</span>
+                                </button>
+                                <!-- Video 3 Button -->
+                                <button 
+                                    class="video-select-btn w-full text-left p-4 transition-colors hover:bg-gray-700" 
+                                    data-poster="https://placehold.co/600x400/555/FFF?text=Video+3:+Why+Invest+Early"
+                                    data-src="">
+                                    <span class="block text-lg">Video 3: Why Invest Early?</span>
+                                </button>
                              </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-white mb-6">
-                        <div class="bg-gray-800 p-6 rounded-lg">
-                            <h4 class="text-gray-400 text-sm font-bold uppercase">Your Investment</h4>
-                            <p id="your-investment-result" class="text-3xl font-bold mt-2 gold-text">₹0</p>
-                        </div>
-                        <div class="bg-green-900 bg-opacity-50 border border-green-500 p-6 rounded-lg">
-                            <h4 class="text-green-300 text-sm font-bold uppercase">With Company Match</h4>
-                            <p id="matched-investment-result" class="text-4xl font-extrabold mt-2 text-green-300">₹0</p>
-                        </div>
-                        <div class="bg-gray-800 p-6 rounded-lg">
-                            <h4 class="text-gray-400 text-sm font-bold uppercase">Company's Gift</h4>
-                            <p id="company-gift-result" class="text-3xl font-bold mt-2 gold-text">₹0</p>
-                        </div>
-                    </div>
-
-                    <div id="wealth-chart" class="w-full h-64 chart-container relative">
-                         <div class="chart-tooltip"></div>
-                    </div>
-                    
-                    <p class="mt-4 text-xs text-gray-500">*Projected returns are based on a 12% compounded annual growth rate (CAGR). We match your first SIP.</p>
-                    <a href="#register" class="mt-8 inline-block px-10 py-4 text-lg font-bold text-black gold-bg rounded-full btn-gold">Secure Your Spot</a>
                 </div>
-            </div>
-        </section>
-
-        <!-- Section 3: Benefits -->
-        <section class="py-16 md:py-24">
-            <div class="container mx-auto px-6 text-center">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Your Inner Circle Advantages</h3>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                    <div class="card p-8 rounded-xl text-left fade-in" style="transition-delay: 100ms;">
-                        <h4 class="font-serif text-2xl font-bold text-white mb-2">Double First SIP</h4>
-                        <p class="text-gray-400 mb-4">We match your first three monthly investments, doubling your growth potential from day one.</p>
-                        <p class="font-bold gold-text">Value: Up to ₹1.2L annually</p>
-                    </div>
-                     <div class="card p-8 rounded-xl text-left fade-in" style="transition-delay: 200ms;">
-                        <h4 class="font-serif text-2xl font-bold text-white mb-2">RM within 24 hrs</h4>
-                        <p class="text-gray-400 mb-4">A dedicated relationship manager is assigned to you immediately for setup and guidance.</p>
-                        <p class="font-bold gold-text">Value: Instant personalized support</p>
-                    </div>
-                     <div class="card p-8 rounded-xl text-left fade-in" style="transition-delay: 300ms;">
-                        <h4 class="font-serif text-2xl font-bold text-white mb-2">Zero Fees</h4>
-                        <p class="text-gray-400 mb-4">All company-matched contributions are completely free of any processing or management fees.</p>
-                        <p class="font-bold gold-text">Value: Save ₹24K on ₹10L</p>
-                    </div>
-                     <div class="card p-8 rounded-xl text-left fade-in" style="transition-delay: 400ms;">
-                        <h4 class="font-serif text-2xl font-bold text-white mb-2">Exclusive Masterclass</h4>
-                        <p class="text-gray-400 mb-4">Get free access to our premium, expert-led courses on advanced investing strategies.</p>
-                        <p class="font-bold gold-text">Value: ₹30K premium access</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: Journey -->
-        <section class="py-16 md:py-24 bg-black">
-            <div class="container mx-auto px-6 text-center">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">How It Works</h3>
-                <div id="journey-section" class="max-w-4xl mx-auto mt-12 relative fade-in" style="transition-delay: 200ms;">
-                    <svg id="journey-svg" class="absolute left-0 w-full h-24 hidden md:block" style="z-index: 0; top: -1rem;">
-                        <path id="journey-line-1" stroke="#CFB53B" stroke-width="3" fill="none" />
-                        <path id="journey-line-2" stroke="#CFB53B" stroke-width="3" fill="none" />
-                        <path id="journey-line-3" stroke="#CFB53B" stroke-width="3" fill="none" />
-                    </svg>
-                    <div class="relative grid grid-cols-1 md:grid-cols-4 gap-y-8 md:gap-y-0 md:gap-x-8 text-center" style="z-index: 1;">
-                        <div class="flex flex-col items-center journey-step">
-                            <div class="w-16 h-16 rounded-full gold-bg text-black flex items-center justify-center font-serif text-2xl font-bold">1</div>
-                            <h4 class="font-bold text-xl mt-4">Enroll</h4>
-                            <p class="text-gray-400">Email + OTP (30 sec)</p>
-                        </div>
-                         <div class="flex flex-col items-center journey-step">
-                            <div class="w-16 h-16 rounded-full gold-bg text-black flex items-center justify-center font-serif text-2xl font-bold">2</div>
-                            <h4 class="font-bold text-xl mt-4">Connect</h4>
-                            <p class="text-gray-400">RM calls, setup guidance</p>
-                        </div>
-                         <div class="flex flex-col items-center journey-step">
-                            <div class="w-16 h-16 rounded-full gold-bg text-black flex items-center justify-center font-serif text-2xl font-bold">3</div>
-                            <h4 class="font-bold text-xl mt-4">Invest</h4>
-                            <p class="text-gray-400">Auto-SIP activated</p>
-                        </div>
-                         <div class="flex flex-col items-center journey-step">
-                            <div class="w-16 h-16 rounded-full gold-bg text-black flex items-center justify-center font-serif text-2xl font-bold">4</div>
-                            <h4 class="font-bold text-xl mt-4">Grow</h4>
-                            <p class="text-gray-400">Watch wealth compound</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 5: Portfolio -->
-        <section class="py-16 md:py-24">
-            <div class="container mx-auto px-6 text-center">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Where Your Money Goes</h3>
-                 <div class="max-w-4xl mx-auto mt-12 overflow-x-auto fade-in" style="transition-delay: 200ms;">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b border-gray-700">
-                                <th class="p-4 text-gray-400 font-semibold">Fund</th>
-                                <th class="p-4 text-gray-400 font-semibold">Category</th>
-                                <th class="p-4 text-gray-400 font-semibold">5Y Returns (CAGR)</th>
-                                <th class="p-4 text-gray-400 font-semibold">Risk</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-800">
-                                <td class="p-4 font-bold">ICICI Pru Bluechip</td>
-                                <td class="p-4">Large Cap</td>
-                                <td class="p-4 text-green-400 font-bold">14.2%</td>
-                                <td class="p-4">Moderate</td>
-                            </tr>
-                            <tr class="border-b border-gray-800">
-                                <td class="p-4 font-bold">Parag Parikh Flexi Cap</td>
-                                <td class="p-4">Flexi Cap</td>
-                                <td class="p-4 text-green-400 font-bold">16.8%</td>
-                                <td class="p-4">Mod-High</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-bold">HDFC Corporate Bond</td>
-                                <td class="p-4">Debt</td>
-                                <td class="p-4 text-green-400 font-bold">7.4%</td>
-                                <td class="p-4">Low</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                 </div>
-                 <p class="mt-6 text-gray-500 italic">Allocation is customized in your RM consultation.</p>
-            </div>
-        </section>
-        
-        <!-- Section 6: Expert Guidance -->
-        <section class="py-16 md:py-24 bg-black">
-             <div class="container mx-auto px-6 text-center">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Meet Your Lead Advisor</h3>
-                 <div class="max-w-3xl mx-auto mt-12 rounded-xl overflow-hidden fade-in" style="transition-delay: 200ms;">
-                    <div class="aspect-video video-placeholder">
-                        <div class="play-button">
-                             <svg class="w-10 h-10 text-black" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm3.5 1.5l6 4-6 4v-8z"/></svg>
-                        </div>
-                    </div>
-                 </div>
-                 <p class="mt-6 text-lg text-gray-300">Our investment philosophy and commitment to your wealth.</p>
-            </div>
-        </section>
-
-        <!-- Section 7: Goal Calculators -->
-        <section class="py-16 md:py-24">
-             <div id="goal-calculators" class="container mx-auto px-6 text-center">
-                 <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Plan Your Future</h3>
-                 <div class="max-w-4xl mx-auto mt-12 fade-in" style="transition-delay: 200ms;">
-                    <div class="border-b border-gray-700 mb-6 flex justify-center space-x-4">
-                        <button class="tab-btn py-2 px-4 border-b-2 border-transparent text-lg text-gray-400 hover:text-white transition-colors active" data-tab="education">Child's Education</button>
-                        <button class="tab-btn py-2 px-4 border-b-2 border-transparent text-lg text-gray-400 hover:text-white transition-colors" data-tab="home">Home Down Payment</button>
-                        <button class="tab-btn py-2 px-4 border-b-2 border-transparent text-lg text-gray-400 hover:text-white transition-colors" data-tab="retirement">Retirement</button>
-                    </div>
+            </section>
+            
+            <!-- Section 5: Stories from Within -->
+            <section class="scroll-animate-section py-24">
+                <div class="container mx-auto max-w-4xl px-6 text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-16">
+                        Stories from <span class="text-amber-400">Within</span>
+                    </h2>
                     
-                    <div class="chart-tooltip"></div>
-                    
-                    <!-- Education Calculator -->
-                    <div id="education-calculator" class="tab-content">
-                        <div class="grid md:grid-cols-3 gap-4 mb-6">
-                            <input id="edu-cost" type="number" placeholder="Today's Cost (e.g., 2000000)" class="calc-input p-3" value="2000000">
-                            <input id="edu-child-age" type="number" placeholder="Child's Current Age" class="calc-input p-3" value="5">
-                            <input id="edu-college-age" type="number" placeholder="Age at College" class="calc-input p-3" value="18">
+                    <!-- Testimonial Card -->
+                    <div class="bg-amber-400 text-gray-900 p-8 md:p-12 rounded-3xl shadow-xl relative">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                            <!-- Text Content -->
+                            <div class="md:col-span-2 text-left">
+                                <!-- 5 Stars -->
+                                <div class="flex space-x-1 mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </div>
+                                <blockquote class="text-2xl font-medium mb-6">
+                                    “I never thought I'd understand Mutual Funds. Now, I've started my first SIP — thanks to ZIC.”
+                                </blockquote>
+                                <cite class="not-italic">
+                                    <span class="font-bold">Surya Prakash</span> | 
+                                    <span class="text-gray-700">Creative Designer, ZMSL</span>
+                                </cite>
+                            </div>
+                            
+                            <!-- Avatar -->
+                            <div class="flex justify-center md:justify-end">
+                                <img src="https://placehold.co/150x150/FFFFFF/333?text=Surya" 
+                                     alt="Surya Prakash" 
+                                     class="rounded-full w-36 h-36 md:w-40 md:h-40 object-cover border-4 border-white shadow-lg"
+                                     onerror="this.src='https://placehold.co/150x150/FFFFFF/333?text=Avatar'">
+                            </div>
                         </div>
-                        <button id="calculate-edu" class="gold-bg text-black font-bold py-2 px-6 rounded-full btn-gold mb-6">Calculate SIP</button>
-                        <div id="edu-result" class="text-2xl font-bold text-white h-8"></div>
-                        <div id="edu-chart" class="w-full h-64 mt-4 chart-container"></div>
-                    </div>
-                    
-                    <!-- Home Calculator -->
-                    <div id="home-calculator" class="tab-content hidden">
-                        <div class="grid md:grid-cols-2 gap-4 mb-6">
-                            <input id="home-goal" type="number" placeholder="Target Down Payment" class="calc-input p-3" value="2500000">
-                            <input id="home-years" type="number" placeholder="Years to Save" class="calc-input p-3" value="7">
-                        </div>
-                        <button id="calculate-home" class="gold-bg text-black font-bold py-2 px-6 rounded-full btn-gold mb-6">Calculate SIP</button>
-                        <div id="home-result" class="text-2xl font-bold text-white h-8"></div>
-                        <div id="home-chart" class="w-full h-64 mt-4 chart-container"></div>
-                    </div>
-                    
-                    <!-- Retirement Calculator -->
-                    <div id="retirement-calculator" class="tab-content hidden">
-                        <div class="grid md:grid-cols-2 gap-4 mb-6">
-                             <input id="ret-current-age" type="number" placeholder="Your Current Age" class="calc-input p-3" value="30">
-                             <input id="ret-age" type="number" placeholder="Retirement Age" class="calc-input p-3" value="60">
-                             <input id="ret-monthly-expense" type="number" placeholder="Desired Monthly Expense" class="calc-input p-3" value="75000">
-                             <input id="ret-life-expectancy" type="number" placeholder="Life Expectancy" class="calc-input p-3" value="85">
-                        </div>
-                         <button id="calculate-ret" class="gold-bg text-black font-bold py-2 px-6 rounded-full btn-gold mb-6">Calculate SIP</button>
-                        <div id="ret-result" class="text-2xl font-bold text-white h-8"></div>
-                        <div id="ret-chart" class="w-full h-64 mt-4 chart-container"></div>
-                    </div>
-                 </div>
-            </div>
-        </section>
-
-        <!-- Section 8: Our Why -->
-        <section class="py-16 md:py-24 bg-black">
-            <div class="container mx-auto px-6 text-center">
-                <div class="max-w-3xl mx-auto fade-in">
-                    <h3 class="font-serif text-3xl md:text-5xl font-bold text-white">You're Family</h3>
-                    <div class="mt-8 p-8 bg-gray-900 rounded-xl border-l-4 gold-border">
-                        <p class="font-serif text-2xl gold-text italic leading-relaxed">"At Zuari Finserv, employee prosperity is our prosperity. Inner Circle is our commitment—we invest our money in your future because family takes care of family."</p>
-                        <p class="mt-6 font-bold text-gray-400">— Leadership Team</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Section 9: FAQ -->
-        <section class="py-16 md:py-24">
-            <div class="container mx-auto px-6 max-w-3xl">
-                <h3 class="font-serif text-3xl md:text-5xl font-bold text-white text-center mb-12 fade-in">Frequently Asked Questions</h3>
-                <div id="faq-accordion" class="space-y-4 fade-in" style="transition-delay: 200ms;">
-                    <!-- FAQ items will be inserted by JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 10: Comparison -->
-        <section class="py-16 md:py-24 bg-black">
-            <div class="container mx-auto px-6 text-center">
-                 <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Inner Circle vs. DIY</h3>
-                 <div class="max-w-4xl mx-auto mt-12 grid md:grid-cols-2 gap-8 text-left fade-in" style="transition-delay: 200ms;">
-                    <div class="card p-8 rounded-lg">
-                        <h4 class="font-serif text-3xl font-bold mb-6">Alone</h4>
-                        <ul class="space-y-4 text-lg">
-                            <li class="flex justify-between"><span>Monthly Investment:</span> <span class="font-bold">₹5K</span></li>
-                            <li class="flex justify-between"><span>10Y Wealth:</span> <span class="font-bold">₹11.8L</span></li>
-                            <li class="flex justify-between"><span>Advisory:</span> <span class="font-bold">₹3-5K/month</span></li>
-                            <li class="flex justify-between"><span>Support:</span> <span class="font-bold">None</span></li>
-                        </ul>
-                    </div>
-                    <div class="card p-8 rounded-lg border-2 gold-border shadow-2xl shadow-yellow-500/10">
-                        <h4 class="font-serif text-3xl font-bold mb-6 gold-text">Inner Circle</h4>
-                         <ul class="space-y-4 text-lg">
-                            <li class="flex justify-between"><span>Monthly Investment:</span> <span class="font-bold text-green-400">₹10K (matched)</span></li>
-                            <li class="flex justify-between"><span>10Y Wealth:</span> <span class="font-bold text-green-400">₹23.6L</span></li>
-                            <li class="flex justify-between"><span>Advisory:</span> <span class="font-bold text-green-400">Free</span></li>
-                            <li class="flex justify-between"><span>Support:</span> <span class="font-bold text-green-400">Dedicated RM</span></li>
-                        </ul>
-                    </div>
-                 </div>
-            </div>
-        </section>
-        
-        <!-- Section 11: Coming Soon -->
-        <section class="py-16 md:py-24">
-             <div class="container mx-auto px-6 text-center">
-                 <h3 class="font-serif text-3xl md:text-5xl font-bold text-white fade-in">Inner Circle Masterclass Series</h3>
-                 <p class="mt-4 text-lg text-yellow-300 font-semibold fade-in">🔜 Launching Soon</p>
-                 <div class="max-w-3xl mx-auto mt-8 grid sm:grid-cols-2 gap-4 text-left fade-in" style="transition-delay: 200ms;">
-                    <div class="bg-gray-800 p-4 rounded-lg">SIP strategies for maximum growth</div>
-                    <div class="bg-gray-800 p-4 rounded-lg">Tax-optimized wealth building</div>
-                    <div class="bg-gray-800 p-4 rounded-lg">Portfolio rebalancing mastery</div>
-                    <div class="bg-gray-800 p-4 rounded-lg">Retirement planning fundamentals</div>
-                 </div>
-                 <div class="mt-8 max-w-md mx-auto fade-in" style="transition-delay: 400ms;">
-                    <a href="#register" id="notify-form" class="gold-bg text-black font-bold py-3 px-6 rounded-full btn-gold inline-block">Notify Me</a>
-                 </div>
-            </div>
-        </section>
-        
-    </main>
-
-    <footer class="bg-black py-8 border-t border-gray-800">
-        <div class="container mx-auto px-6 text-center text-gray-500">
-             <div class="flex justify-center space-x-6 mb-4">
-                <a href="#faq-accordion" class="hover:text-gold-text transition-colors">FAQ</a>
-                <a href="#portfolio" class="hover:text-gold-text transition-colors">Fund Details</a>
-             </div>
-             <p>Contact: <a href="mailto:innercircle@zuarifinserv.com" class="hover:text-gold-text transition-colors">innercircle@zuarifinserv.com</a></p>
-            <p class="text-sm mt-4">Mutual funds are subject to market risks. Read all scheme related documents carefully before investing.</p>
-             <p class="text-sm mt-2">&copy; 2025 The Inner Circle. All Rights Reserved.</p>
-        </div>
-    </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-    // --- GLOBAL SETTINGS ---
-    const API_BASE_URL = 'http://localhost:3000';
-    let formSubmitted = false;
-    
-    // --- UTILITY FUNCTIONS ---
-    const formatCurrency = (num) => {
-        if (num >= 10000000) return `₹${(num / 10000000).toFixed(1)} Cr`;
-        if (num >= 100000) return `₹${(num / 100000).toFixed(1)} L`;
-        if (num >= 1000) return `₹${(num / 1000).toFixed(0)}K`;
-        return `₹${num.toFixed(0)}`;
-    };
-
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = `fixed top-5 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-xl z-[9999] transition-transform duration-500 ${isError ? 'bg-red-600 text-white' : 'bg-gray-800 text-white'}`;
-        toast.style.transform = 'translate(-50%, 0)';
-        setTimeout(() => {
-            toast.style.transform = 'translate(-50%, -150%)';
-        }, 3000);
-    }
-
-    // --- SMOOTH SCROLL & FADE-IN ANIMATIONS ---
-    function setupPageAnimations() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetElement = document.querySelector(this.getAttribute('href'));
-                if(targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-
-        const faders = document.querySelectorAll('.fade-in');
-        const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
-        const appearOnScroll = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            });
-        }, appearOptions);
-        faders.forEach(fader => appearOnScroll.observe(fader));
-    }
-
-    // --- HERO FORM LOGIC ---
-    function setupHeroForm() {
-        const sendOtpBtn = document.getElementById('sendOtpBtn');
-        const verifyOtpBtn = document.getElementById('verifyOtpBtn');
-        const emailInput = document.getElementById('email');
-        const successCloseBtn = document.getElementById('success-close-btn');
-        
-        const showStep = (stepId) => {
-            document.querySelectorAll('#main-form-container .form-step').forEach(s => s.classList.remove('active'));
-            document.getElementById(stepId).classList.add('active');
-        }
-
-        sendOtpBtn.addEventListener('click', () => {
-            const emailValue = emailInput.value.trim();
-            if (emailValue === '') {
-                showToast('Please enter your email.', true);
-                emailInput.classList.add('shake');
-                setTimeout(() => {
-                    emailInput.classList.remove('shake');
-                }, 820);
-                return;
-            }
-             if (/^[^\s@]+@adventz\.com$/.test(emailValue)) {
-                showToast('OTP sent to your email.');
-                showStep('step2');
-             } else {
-                showToast('Enter email in this format you@adventz.com', true);
-                emailInput.classList.add('shake');
-                setTimeout(() => {
-                    emailInput.classList.remove('shake');
-                }, 820);
-             }
-        });
-
-        verifyOtpBtn.addEventListener('click', () => {
-            showToast('Verification successful!');
-            showStep('success-screen');
-            formSubmitted = true;
-        });
-        
-        successCloseBtn.addEventListener('click', () => {
-            showStep('step1');
-            emailInput.value = '';
-        });
-
-        showStep('step1');
-    }
-
-    // --- WEALTH CALCULATOR LOGIC & CHART ---
-    function setupWealthCalculator() {
-        const sipInput = document.getElementById('monthly-sip');
-        const yearsButtons = document.querySelectorAll('#investment-years button');
-        const yourResult = document.getElementById('your-investment-result');
-        const matchedResult = document.getElementById('matched-investment-result');
-        const giftResult = document.getElementById('company-gift-result');
-        const chartContainerId = 'wealth-chart';
-        
-        let monthlySip = 5000;
-        let years = 10;
-        const annualRate = 0.12;
-
-        const updateCalculator = () => {
-            const monthlyRate = annualRate / 12;
-            const totalMonths = years * 12;
-            let userCorpus = 0;
-            let companyCorpus = 0;
-            const chartData = [];
-
-            for (let month = 1; month <= totalMonths; month++) {
-                userCorpus *= (1 + monthlyRate);
-                companyCorpus *= (1 + monthlyRate);
-                userCorpus += monthlySip;
-                if (month <= 3) {
-                    companyCorpus += monthlySip;
-                }
-                const totalCorpus = userCorpus + companyCorpus;
-                const volatilityFactor = 1 + (Math.random() - 0.5) * 0.05;
-                chartData.push({ month: month, value: totalCorpus * volatilityFactor });
-            }
-            
-            yourResult.textContent = formatCurrency(userCorpus);
-            matchedResult.textContent = formatCurrency(userCorpus + companyCorpus);
-            giftResult.textContent = formatCurrency(companyCorpus);
-
-            drawWealthChart(chartContainerId, chartData, years);
-        };
-
-        sipInput.addEventListener('input', () => {
-            monthlySip = parseFloat(sipInput.value) || 0;
-            updateCalculator();
-        });
-
-        yearsButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                yearsButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                years = parseInt(button.dataset.years);
-                updateCalculator();
-            });
-        });
-        
-        updateCalculator();
-    }
-
-    function drawWealthChart(containerId, data, totalYears) {
-        const container = d3.select(`#${containerId}`);
-        container.selectAll("svg").remove();
-
-        const tooltip = container.select(".chart-tooltip");
-        
-        const margin = {top: 20, right: 20, bottom: 30, left: 60};
-        const width = container.node().getBoundingClientRect().width - margin.left - margin.right;
-        const height = 256 - margin.top - margin.bottom;
-
-        const svg = container.append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        const x = d3.scaleLinear().domain([0, totalYears]).range([0, width]);
-        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(Math.min(totalYears, 10)).tickFormat(d => d > 0 ? `${d}y` : '0'));
-
-        const y = d3.scaleLinear().domain([0, d3.max(data, d => d.value) * 1.05]).range([height, 0]);
-        svg.append("g").call(d3.axisLeft(y).ticks(5).tickFormat(d => formatCurrency(d).replace('₹','')));
-        
-        const line = d3.line().x(d => x(d.month / 12)).y(d => y(d.value));
-        const path = svg.append("path").datum(data).attr("fill", "none").attr("stroke", "#CFB53B").attr("stroke-width", 2).attr("d", line);
-
-        const pathLength = path.node().getTotalLength();
-        path.attr("stroke-dasharray", pathLength).attr("stroke-dashoffset", pathLength).transition().duration(2000).attr("stroke-dashoffset", 0);
-
-        const hoverElements = svg.append("g").style("display", "none");
-        const hoverLine = hoverElements.append("line").attr("class", "hover-line").attr("y1", 0).attr("y2", height);
-        const hoverCircle = hoverElements.append("circle").attr("class", "hover-circle").attr("r", 4);
-        
-        svg.append("rect")
-            .attr("width", width).attr("height", height).attr("fill", "none").attr("pointer-events", "all")
-            .on("mouseover", () => { hoverElements.style("display", null); tooltip.style("opacity", 1); })
-            .on("mouseout", () => { hoverElements.style("display", "none"); tooltip.style("opacity", 0); })
-            .on("mousemove", (event) => {
-                const [mx] = d3.pointer(event);
-                const year = x.invert(mx);
-                const month = Math.round(year * 12);
-                const bisect = d3.bisector(d => d.month).left;
-                const index = bisect(data, month, 1);
-                const d = data[index - 1] || data[0];
-
-                if(d){
-                    hoverLine.attr("x1", x(d.month/12)).attr("x2", x(d.month/12));
-                    hoverCircle.attr("cx", x(d.month/12)).attr("cy", y(d.value));
-
-                    tooltip.html(`Year: ${(d.month/12).toFixed(1)}<br>Wealth: ${formatCurrency(d.value)}`)
-                        .style("left", (event.pageX + 15) + "px")
-                        .style("top", (event.pageY - 28) + "px");
-                }
-            });
-    }
-    
-    // --- D3 GOAL CHART DRAWING FUNCTION ---
-    function drawGoalChart(containerId, data) {
-        const container = d3.select(`#${containerId}`);
-        container.selectAll("*").remove(); 
-
-        const tooltip = d3.select(`#goal-calculators .chart-tooltip`);
-        
-        const margin = {top: 40, right: 20, bottom: 30, left: 60};
-        const width = container.node().getBoundingClientRect().width - margin.left - margin.right;
-        const height = 256 - margin.top - margin.bottom;
-
-        const svg = container.append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-        
-        const x = d3.scaleBand()
-            .range([0, width])
-            .domain(data.map(d => d.year))
-            .padding(0.4);
-            
-        svg.append("g")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x).tickValues(x.domain().filter((d,i) => !((i+1)%Math.ceil(data.length/5)) || i === 0 || i === data.length -1 )));
-
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.value) * 1.3])
-            .range([height, 0]);
-            
-        svg.append("g")
-           .call(d3.axisLeft(y).ticks(5).tickFormat(d => formatCurrency(d).replace('₹','')));
-
-        const bars = svg.selectAll("mybar")
-            .data(data)
-            .enter()
-            .append("rect")
-            .attr("x", d => x(d.year))
-            .attr("y", height)
-            .attr("width", x.bandwidth())
-            .attr("height", 0)
-            .attr("fill", "#CFB53B")
-            .on("mouseover", function(event, d) {
-                d3.select(this).attr("fill", "#E0C95C");
-                tooltip.style("opacity", 1);
-            })
-            .on("mousemove", (event, d) => {
-                tooltip.html(`Year: ${d.year}<br>Corpus: ${formatCurrency(d.value)}`)
-                    .style("left", (event.pageX + 15) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-            })
-            .on("mouseout", function() {
-                d3.select(this).attr("fill", "#CFB53B");
-                tooltip.style("opacity", 0);
-            });
-            
-        const barTransition = bars.transition()
-            .duration(800)
-            .attr("y", d => y(d.value))
-            .attr("height", d => height - y(d.value))
-            .delay((d,i) => i*20);
-        
-        barTransition.end().then(() => {
-            if (data.length < 2) return;
-
-            const lastBar = data[data.length - 1];
-            const startX = x(data[0].year);
-            const startY = height;
-            const endX = x(lastBar.year) + x.bandwidth();
-            const endY = 0;
-
-            const pathData = `M ${startX},${startY} L ${endX},${endY}`;
-
-            const arrowPath = svg.append("path")
-                .attr("d", pathData)
-                .attr("fill", "none")
-                .attr("stroke", "#CFB53B")
-                .attr("stroke-width", 8)
-                .attr("stroke-linecap", "round");
-            
-            const arrowhead = svg.append("path")
-                .attr("d", "M -12 -10 L 15 0 L -12 10 Z")
-                .attr("fill", "#CFB53B");
-
-            const length = arrowPath.node().getTotalLength();
-            arrowPath.attr("stroke-dasharray", length)
-                .attr("stroke-dashoffset", length)
-                .transition()
-                .duration(2000)
-                .ease(d3.easeCubicInOut)
-                .attr("stroke-dashoffset", 0);
-
-            const p1 = arrowPath.node().getPointAtLength(0);
-            const p2 = arrowPath.node().getPointAtLength(length);
-            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
-
-            arrowhead.attr("transform", `translate(${p1.x},${p1.y}) rotate(${angle})`)
-                .transition()
-                .duration(2000)
-                .ease(d3.easeCubicInOut)
-                .attrTween("transform", () => {
-                    return t => {
-                        const p = arrowPath.node().getPointAtLength(t * length);
-                        return `translate(${p.x},${p.y}) rotate(${angle})`;
-                    };
-                });
-        });
-    }
-
-    // --- GOAL CALCULATORS LOGIC ---
-    function setupGoalCalculators() {
-        const tabs = document.querySelectorAll('.tab-btn');
-        const contents = document.querySelectorAll('.tab-content');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                contents.forEach(c => c.classList.add('hidden'));
-                const activeTabContent = document.getElementById(`${tab.dataset.tab}-calculator`);
-                activeTabContent.classList.remove('hidden');
-                activeTabContent.querySelector('button').click();
-            });
-        });
-
-        const inflationRate = 0.06;
-        const returnRate = 0.12;
-
-        document.getElementById('calculate-edu').addEventListener('click', () => {
-            const cost = parseFloat(document.getElementById('edu-cost').value);
-            const childAge = parseInt(document.getElementById('edu-child-age').value);
-            const collegeAge = parseInt(document.getElementById('edu-college-age').value);
-            if (!cost || !childAge || !collegeAge || collegeAge <= childAge) {
-                document.getElementById('edu-result').textContent = "Please enter valid details.";
-                drawGoalChart('edu-chart', []);
-                return;
-            }
-            const years = collegeAge - childAge;
-            const futureCost = cost * Math.pow(1 + inflationRate, years);
-            const i = returnRate / 12;
-            const n = years * 12;
-            const sip = futureCost / ((((Math.pow(1 + i, n) - 1) / i) * (1 + i)));
-            document.getElementById('edu-result').textContent = `Monthly SIP needed: ${formatCurrency(sip)}`;
-            
-            const chartData = [];
-            for (let yr = 1; yr <= years; yr++) {
-                chartData.push({ year: childAge + yr, value: sip * ((((Math.pow(1 + i, yr * 12) - 1) / i) * (1 + i))) });
-            }
-            drawGoalChart('edu-chart', chartData);
-        });
-        
-        document.getElementById('calculate-home').addEventListener('click', () => {
-            const goal = parseFloat(document.getElementById('home-goal').value);
-            const years = parseInt(document.getElementById('home-years').value);
-            if (!goal || !years) {
-                document.getElementById('home-result').textContent = "Please enter valid details.";
-                drawGoalChart('home-chart', []);
-                return;
-            }
-            const i = returnRate / 12;
-            const n = years * 12;
-            const sip = goal / ((((Math.pow(1 + i, n) - 1) / i) * (1 + i)));
-            document.getElementById('home-result').textContent = `Monthly SIP needed: ${formatCurrency(sip)}`;
-            
-            const chartData = [];
-            for (let yr = 1; yr <= years; yr++) {
-                chartData.push({ year: yr, value: sip * ((((Math.pow(1 + i, yr * 12) - 1) / i) * (1 + i))) });
-            }
-            drawGoalChart('home-chart', chartData);
-        });
-
-        document.getElementById('calculate-ret').addEventListener('click', () => {
-            const currentAge = parseInt(document.getElementById('ret-current-age').value);
-            const retAge = parseInt(document.getElementById('ret-age').value);
-            const monthlyExpense = parseFloat(document.getElementById('ret-monthly-expense').value);
-            const lifeExpectancy = parseInt(document.getElementById('ret-life-expectancy').value);
-             if (!currentAge || !retAge || !monthlyExpense || !lifeExpectancy || retAge <= currentAge) {
-                document.getElementById('ret-result').textContent = "Please enter valid details.";
-                drawGoalChart('ret-chart', []);
-                return;
-            }
-            
-            const yearsToRetire = retAge - currentAge;
-            const futureMonthlyExpense = monthlyExpense * Math.pow(1 + inflationRate, yearsToRetire);
-            const yearsInRetirement = lifeExpectancy - retAge;
-            const corpusNeeded = (futureMonthlyExpense * 12 * yearsInRetirement) * 0.7; // Simplified
-
-            const i = returnRate / 12;
-            const n = yearsToRetire * 12;
-            const sip = corpusNeeded / ((((Math.pow(1 + i, n) - 1) / i) * (1 + i)));
-            document.getElementById('ret-result').textContent = `Monthly SIP needed: ${formatCurrency(sip)}`;
-            
-            const chartData = [];
-            for (let yr = 1; yr <= yearsToRetire; yr++) {
-                chartData.push({ year: currentAge + yr, value: sip * ((((Math.pow(1 + i, yr * 12) - 1) / i) * (1 + i))) });
-            }
-            drawGoalChart('ret-chart', chartData);
-        });
-    }
-
-    // --- FAQ ACCORDION LOGIC ---
-    function setupFaq() {
-        const faqData = [
-            { q: "What if I leave the company?", a: "Your contributions are 100% yours. Company matching vests over time: 25% after Year 1, 50% after Year 2, and 100% after Year 3." },
-            { q: "I've never invested—is it risky?", a: "Your RM creates a balanced portfolio based on your personal risk tolerance. You can start small to grow your confidence." },
-            { q: "Can I pause my contributions?", a: "Yes. We offer flexible pause options to accommodate major life events and emergencies." },
-            { q: "How is this different from a PF?", a: "PF offers ~8% fixed returns for retirement. SIPs average 12-15% with market growth. Our matching is immediate, not locked until retirement." },
-            { q: "Is my money safe?", a: "Absolutely. All funds are held with SEBI-regulated fund houses directly in your name, ensuring full regulatory protection." },
-            { q: "What about a market crash?", a: "SIPs are designed for long-term growth. They automatically buy more units when prices are low, which historically benefits investors over 10+ year horizons." },
-            { q: "How do I access my funds?", a: "You can redeem your funds after a 1-year lock-in period. The money will be in your bank account within 3-4 business days." },
-            { q: "What are the tax implications?", a: "Equity gains up to ₹1.25L per year are tax-free, with a 12.5% tax on gains beyond that. This is generally more tax-efficient than FDs." }
-        ];
-
-        const accordion = document.getElementById('faq-accordion');
-        if (!accordion) return;
-        accordion.innerHTML = faqData.map(item => `
-            <div class="accordion-item bg-gray-800 rounded-lg border border-gray-700">
-                <button class="accordion-button w-full p-5 flex justify-between items-center text-white font-semibold text-left focus:outline-none">
-                    <span>${item.q}</span>
-                    <svg class="w-5 h-5 transform transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="accordion-content border-t border-gray-700 text-gray-400">
-                    <p class="p-5">${item.a}</p>
-                </div>
-            </div>
-        `).join('');
-
-        accordion.addEventListener('click', (e) => {
-            const button = e.target.closest('.accordion-button');
-            if (button) {
-                const item = button.parentElement;
-                const content = button.nextElementSibling;
-                const isOpen = item.classList.toggle('open');
-                content.style.maxHeight = isOpen ? content.scrollHeight + "px" : null;
-            }
-        });
-    }
-
-    // --- JOURNEY LINE ANIMATION ---
-    function setupJourneyAnimation() {
-        const section = document.getElementById('journey-section');
-        if (!section) return;
-
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                requestAnimationFrame(() => {
-                    const steps = Array.from(section.querySelectorAll('.journey-step'));
-                    const svg = document.getElementById('journey-svg');
-                    const paths = [
-                        document.getElementById('journey-line-1'),
-                        document.getElementById('journey-line-2'),
-                        document.getElementById('journey-line-3')
-                    ];
-                    
-                    if (steps.length < 4 || !svg || paths.some(p => !p)) return;
-
-                    const svgRect = svg.getBoundingClientRect();
-                    const points = steps.map(step => {
-                        const icon = step.querySelector('.w-16');
-                        const rect = icon.getBoundingClientRect();
-                        return {
-                            x: rect.left - svgRect.left + rect.width / 2,
-                            y: rect.top - svgRect.top + rect.height / 2
-                        };
-                    });
-
-                    if (points.some(p => isNaN(p.x) || isNaN(p.y))) return;
-
-                    for (let i = 0; i < paths.length; i++) {
-                        const path = paths[i];
-                        const p1 = points[i];
-                        const p2 = points[i+1];
                         
-                        const rx = (p2.x - p1.x) / 2;
-                        const ry = 30; // Arc height
+                        <!-- Pagination Dots -->
+                        <div class="flex justify-start space-x-2 mt-8 md:mt-4">
+                            <span class="w-3 h-3 bg-gray-800 rounded-full"></span>
+                            <span class="w-3 h-3 bg-gray-600 rounded-full"></span>
+                            <span class="w-3 h-3 bg-gray-600 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 6: Form -->
+            <section id="form-section" class="scroll-animate-section py-24 bg-black bg-opacity-20">
+                <div class="container mx-auto max-w-6xl px-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <!-- Left Content -->
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-bold leading-tight">
+                                Take Your First Step Towards
+                                <span class="block text-amber-400">Financial Freedom</span>
+                            </h2>
+                            <p class="mt-6 text-lg text-gray-300">
+                                Begin your journey to a secure future — built on smart investments and trusted guidance.
+                            </p>
+                        </div>
+                        
+                        <!-- Right Form -->
+                        <div id="form-wrapper">
+  <form id="signup-form" class="space-y-5">
+    <div id="email-field">
+      <label for="email" class="sr-only">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Email"
+        class="w-full px-5 py-3.5 bg-gray-800 border-2 border-amber-400 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-300"
+        required
+      />
+      <p id="email-error" class="text-red-500 text-sm mt-2 hidden">
+        Please enter a valid email ending with @adventz.com
+      </p>
+      <p id="email-success" class="text-green-500 text-sm mt-2 hidden">
+        OTP sent to your email. Please check your console for the mock OTP.
+      </p>
+    </div>
 
-                        const d = `M ${p1.x} ${p1.y} A ${rx} ${ry} 0 0 0 ${p2.x} ${p2.y}`;
-                        path.setAttribute('d', d);
+    <div id="otp-field" class="hidden">
+      <label for="otp" class="sr-only">OTP</label>
+      <input
+        type="text"
+        id="otp"
+        name="otp"
+        placeholder="Enter 6-digit OTP"
+        class="w-full px-5 py-3.5 bg-gray-800 border-2 border-amber-400 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-300"
+        maxlength="6"
+      />
+      <p id="otp-error" class="text-red-500 text-sm mt-2 hidden">
+        Invalid OTP. Please try again.
+      </p>
 
-                        const length = path.getTotalLength();
-                        path.style.strokeDasharray = length;
-                        path.style.strokeDashoffset = length;
-                    }
+      <!-- 🔁 Resend OTP Section -->
+      <p
+        id="resend-otp-container"
+        class="hidden text-sm text-gray-400 mt-3 text-center"
+      >
+        Didn’t get the OTP?
+        <button
+          id="resend-otp-btn"
+          type="button"
+          class="text-amber-400 hover:underline"
+        >
+          Resend OTP
+        </button>
+        <span id="resend-timer" class="ml-1 text-gray-500"></span>
+      </p>
+    </div>
+
+    <button
+      type="submit"
+      id="request-otp-btn"
+      class="w-full bg-amber-400 text-gray-900 font-semibold px-8 py-3.5 rounded-lg shadow-lg hover:bg-amber-300 transition-all disabled:opacity-50"
+    >
+      Request OTP
+    </button>
+
+    <button
+      type="submit"
+      id="submit-otp-btn"
+      class="w-full bg-amber-400 text-gray-900 font-semibold px-8 py-3.5 rounded-lg shadow-lg hover:bg-amber-300 transition-all hidden"
+    >
+      Submit
+    </button>
+  </form>
+
+  <!-- Success Message -->
+  <div
+    id="form-success-message"
+    class="hidden text-center p-8 bg-gray-800 rounded-lg border-2 border-amber-400"
+  >
+    <h3 class="text-3xl font-bold text-amber-400 mb-4">Thank You!</h3>
+    <p class="text-lg text-white mb-3">
+      You will be contacted shortly by our RM.
+    </p>
+    <p class="text-md text-gray-300">
+      More offers rolling out soon. Follow on Insta for updates!
+    </p>
+  </div>
+</div>
+
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 7: FAQ -->
+            <section class="scroll-animate-section py-24">
+                <div class="container mx-auto max-w-4xl px-6">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">
+                        Frequently Asked <span class="text-amber-400">Questions</span>
+                    </h2>
                     
-                    section.classList.add('is-visible');
-                });
-                observer.unobserve(section);
-            }
-        }, { threshold: 0.7 });
+                    <div class="space-y-6">
+                        <!-- FAQ Item 1 (Open by default) -->
+                        <div class="faq-item bg-gray-800 bg-opacity-70 rounded-2xl border-2 border-amber-400 open transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-amber-400/20">
+                            <h3 class="faq-question cursor-pointer p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">How do I get my 1st SIP EMI free?</span>
+                                <span class="text-amber-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus icon-minus"><path d="M5 12h14"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus icon-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                </span>
+                            </h3>
+                            <div class="faq-answer text-gray-300">
+                                <p class="px-6 pb-6">Start a new SIP via Zuari Inner Circle. After your e-mandate is activated and the first SIP date is successful, we credit the equivalent of your first EMI to your folio/account as per program T&Cs.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- FAQ Item 2 -->
+                        <div class="faq-item bg-gray-800 bg-opacity-70 rounded-2xl border-2 border-amber-400 transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-amber-400/20">
+                            <h3 class="faq-question cursor-pointer p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">Who is eligible?</span>
+                                <span class="text-amber-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus icon-minus"><path d="M5 12h14"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus icon-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                </span>
+                            </h3>
+                            <div class="faq-answer text-gray-300">
+                                <p class="px-6 pb-6">Anyone new to investing with Zuari Finserv is eligible for this program. Please check the detailed T&Cs for more information.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- FAQ Item 3 -->
+                        <div class="faq-item bg-gray-800 bg-opacity-70 rounded-2xl border-2 border-amber-400 transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-amber-400/20">
+                            <h3 class="faq-question cursor-pointer p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">Are there any hidden charges?</span>
+                                <span class="text-amber-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus icon-minus"><path d="M5 12h14"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus icon-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                </span>
+                            </h3>
+                            <div class="faq-answer text-gray-300">
+                                <p class="px-6 pb-6">No, the Zuari Inner Circle program has no hidden charges. All fees associated with your mutual fund investments (like expense ratios) are charged by the AMC and are clearly stated.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        observer.observe(section);
+        </main>
+        
+        <!-- Footer -->
+        <footer class="mt-24 border-t border-gray-800">
+  <div class="container mx-auto max-w-6xl px-6 py-12 text-center">
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-4 sm:gap-x-8 mb-6">
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/p/Zuari-Finserv-Ltd-100064217161384/"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="text-gray-400 hover:text-amber-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+          <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24h11.494v-9.294H9.691v-3.622h3.128V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24h-1.918c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12V24h6.116C23.403 24 24 23.403 24 22.676V1.325C24 .597 23.403 0 22.675 0z"/>
+        </svg>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/zuarifinservlimited?igsh=MTRyczB1MWs1MWVpYg=="
+         target="_blank"
+         rel="noopener noreferrer"
+         class="text-gray-400 hover:text-amber-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.35 3.608 1.325.975.975 1.263 2.242 1.325 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.35 2.633-1.325 3.608-.975.975-2.242 1.263-3.608 1.325-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.35-3.608-1.325-.975-.975-1.263-2.242-1.325-3.608C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.062-1.366.35-2.633 1.325-3.608.975-.975 2.242-1.263 3.608-1.325C8.416 2.175 8.796 2.163 12 2.163zM12 0C8.741 0 8.332.013 7.053.072 5.775.131 4.602.414 3.635 1.381 2.668 2.348 2.385 3.521 2.326 4.799.013 8.332 0 8.741 0 12c0 3.259.013 3.668.072 4.947.059 1.278.342 2.451 1.309 3.418.967.967 2.14 1.25 3.418 1.309 1.279.059 1.688.072 4.947.072s3.668-.013 4.947-.072c1.278-.059 2.451-.342 3.418-1.309.967-.967 1.25-2.14 1.309-3.418.059-1.279.072-1.688.072-4.947s-.013-3.668-.072-4.947c-.059-1.278-.342-2.451-1.309-3.418C19.398.414 18.225.131 16.947.072 15.668.013 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 0 1 0 7.998zm6.406-11.845a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
+        </svg>
+      </a>
+
+      <!-- LinkedIn -->
+      <a href="https://www.linkedin.com/company/zuari-finserv-limited/"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="text-gray-400 hover:text-amber-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+          <path d="M20.447 20.452H17.21V14.98c0-1.306-.027-2.987-1.821-2.987-1.824 0-2.104 1.422-2.104 2.893v5.566H9.05V9h3.104v1.561h.045c.433-.82 1.494-1.683 3.072-1.683 3.286 0 3.892 2.163 3.892 4.977v6.597zM5.337 7.433a1.806 1.806 0 1 1 0-3.612 1.806 1.806 0 0 1 0 3.612zM6.977 20.452H3.692V9h3.285v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.451C23.2 24 24 23.403 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/>
+        </svg>
+      </a>
+    </div>
+
+    <p class="text-gray-500">
+      &copy; 2025 Zuari Finserv. All rights reserved.
+    </p>
+    <p class="text-gray-600 text-sm mt-2">
+      Mutual Fund investments are subject to market risks, read all scheme related documents carefully.
+    </p>
+  </div>
+</footer>
+
+
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // --- Core elements ---
+  const signupForm = document.getElementById('signup-form');
+  const formWrapper = document.getElementById('form-wrapper');
+
+  // Fields
+  const emailInput = document.getElementById('email');
+  const otpInput = document.getElementById('otp');
+
+  // Buttons
+  const requestOtpBtn = document.getElementById('request-otp-btn');
+  const submitOtpBtn = document.getElementById('submit-otp-btn');
+
+  // Messages
+  const emailError = document.getElementById('email-error');
+  const emailSuccess = document.getElementById('email-success');
+  const otpError = document.getElementById('otp-error');
+  const formSuccessMessage = document.getElementById('form-success-message');
+  const otpField = document.getElementById('otp-field');
+
+  // Resend elements
+  const resendContainer = document.getElementById('resend-otp-container');
+  const resendBtn = document.getElementById('resend-otp-btn');
+  const resendTimer = document.getElementById('resend-timer');
+
+  // --- Config ---
+  const API_BASE = 'http://localhost:8080'; // change to your Render URL
+  const DEMO_MODE = false;           // true = fallback mock OTP (111111)
+  const FALLBACK_OTP = '111111';
+  const RESEND_COOLDOWN = 60;       // seconds
+
+  // State
+  let resendCountdownInterval = null;
+  let resendRemaining = 0;
+
+  // --- Utility helpers ---
+  const show = (el) => el && el.classList.remove('hidden');
+  const hide = (el) => el && el.classList.add('hidden');
+  const setBtn = (btn, enabled, text) => {
+    if (!btn) return;
+    btn.disabled = !enabled;
+    if (text !== undefined) btn.textContent = text;
+  };
+
+  const isValidEmail = (email) =>
+    typeof email === 'string' && email.toLowerCase().endsWith('@adventz.com');
+
+  function clearResendCountdown() {
+    if (resendCountdownInterval) {
+      clearInterval(resendCountdownInterval);
+      resendCountdownInterval = null;
+    }
+    resendRemaining = 0;
+    if (resendTimer) resendTimer.textContent = '';
+  }
+
+  function startResendCountdown() {
+    if (!resendBtn || !resendTimer) return;
+    clearResendCountdown();
+    resendBtn.disabled = true;
+    resendRemaining = RESEND_COOLDOWN;
+    resendTimer.textContent = `(${resendRemaining}s)`;
+    resendCountdownInterval = setInterval(() => {
+      resendRemaining -= 1;
+      if (resendRemaining <= 0) {
+        clearResendCountdown();
+        resendBtn.disabled = false;
+        resendTimer.textContent = '';
+      } else {
+        resendTimer.textContent = `(${resendRemaining}s)`;
+      }
+    }, 1000);
+  }
+
+  function enterOtpStep() {
+    setBtn(requestOtpBtn, false, 'OTP Sent');
+    show(otpField);
+    show(submitOtpBtn);
+    if (resendContainer) show(resendContainer);
+    startResendCountdown();
+    try { otpInput.focus(); } catch (e) {}
+  }
+
+  function completeFormSuccess() {
+    hide(signupForm);
+    show(formSuccessMessage);
+  }
+
+  async function sendOtp(email, isResend = false) {
+    hide(emailError);
+    hide(emailSuccess);
+
+    if (!isValidEmail(email)) {
+      show(emailError);
+      setBtn(requestOtpBtn, true, 'Request OTP'); // re-enable for correction
+      return;
     }
 
-
-    // --- EXIT INTENT POPUP LOGIC ---
-    function setupExitIntent() {
-        const modal = document.getElementById('exit-intent-modal');
-        let hasShown = false;
-        
-        document.body.addEventListener('mouseout', (e) => {
-            if (!e.toElement && !e.relatedTarget && e.clientY < 10 && !formSubmitted && !hasShown) {
-                hasShown = true;
-                modal.classList.add('open');
-            }
-        });
-        
-        document.getElementById('claim-benefits-btn').addEventListener('click', () => {
-            modal.classList.remove('open');
-            document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        document.getElementById('exit-anyway-btn').addEventListener('click', () => {
-            modal.classList.remove('open');
-        });
+    // Demo mode
+    if (DEMO_MODE) {
+      console.log('DEMO MODE active — fallback OTP:', FALLBACK_OTP);
+      show(emailSuccess);
+      enterOtpStep();
+      return;
     }
 
-    // --- INITIALIZATION ---
-    document.addEventListener('DOMContentLoaded', () => {
-        setupPageAnimations();
-        setupHeroForm();
-        setupWealthCalculator();
-        setupGoalCalculators();
-        setupFaq();
-        setupJourneyAnimation();
-        setupExitIntent();
-        
-        // Trigger initial calculation for the first goal calculator
-        document.getElementById('calculate-edu').click();
-        
-        document.getElementById('notify-form').addEventListener('click', (e) => {
-            const href = e.currentTarget.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                e.preventDefault();
-                document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+    try {
+      if (isResend) {
+        setBtn(resendBtn, false, 'Resending...');
+      } else {
+        setBtn(requestOtpBtn, false, 'Sending OTP...');
+      }
+
+      const resp = await fetch(`${API_BASE}/api/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Failed to send OTP');
+
+      show(emailSuccess);
+      enterOtpStep();
+      if (resendBtn) setBtn(resendBtn, false, 'Resend OTP');
+    } catch (err) {
+      console.error('sendOtp error:', err);
+      show(emailError);
+      if (isResend) {
+        setBtn(resendBtn, true, 'Resend OTP');
+      } else {
+        setBtn(requestOtpBtn, true, 'Request OTP');
+        hide(otpField);
+        hide(submitOtpBtn);
+      }
+    }
+  }
+
+  async function verifyOtp(email, otp) {
+    hide(otpError);
+    if (!otp) {
+      show(otpError);
+      return;
+    }
+
+    if (DEMO_MODE) {
+      if (otp === FALLBACK_OTP) {
+        completeFormSuccess();
+      } else {
+        show(otpError);
+      }
+      return;
+    }
+
+    try {
+      setBtn(submitOtpBtn, false, 'Verifying...');
+      const resp = await fetch(`${API_BASE}/api/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Invalid OTP');
+      completeFormSuccess();
+    } catch (err) {
+      console.error('verifyOtp error:', err);
+      show(otpError);
+      setBtn(submitOtpBtn, true, 'Submit');
+    }
+  }
+
+  // --- Event Listeners ---
+  requestOtpBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = (emailInput.value || '').trim();
+
+    // Validate BEFORE disabling
+    if (!isValidEmail(email)) {
+      show(emailError);
+      setBtn(requestOtpBtn, true, 'Request OTP');
+      return;
+    }
+
+    hide(emailError);
+    setBtn(requestOtpBtn, false, 'Sending OTP...');
+    sendOtp(email, false);
+  });
+
+  submitOtpBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = (emailInput.value || '').trim();
+    const otp = (otpInput.value || '').trim();
+    verifyOtp(email, otp);
+  });
+
+  if (resendBtn) {
+    resendBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (resendBtn.disabled) return;
+      const email = (emailInput.value || '').trim();
+      setBtn(resendBtn, false, 'Resending...');
+      sendOtp(email, true);
+    });
+  }
+
+  // FAQ Accordion
+  const faqQuestions = document.querySelectorAll('.faq-question');
+  faqQuestions.forEach((question) => {
+    question.addEventListener('click', () => {
+      const item = question.closest('.faq-item');
+      item.classList.toggle('open');
+    });
+  });
+
+  // Cleanup on unload
+  window.addEventListener('beforeunload', () => {
+    clearResendCountdown();
+  });
+
+  // --- NEW: Video Playlist Logic ---
+  const mainVideo = document.getElementById('main-video');
+  const videoSelectBtns = document.querySelectorAll('.video-select-btn');
+
+  if (mainVideo && videoSelectBtns.length > 0) {
+    videoSelectBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Don't do anything if it's already active
+            if (btn.classList.contains('active-video-btn')) {
+                return;
             }
+
+            // Get new video info from data attributes
+            const newSrc = btn.dataset.src;
+            const newPoster = btn.dataset.poster;
+
+            // Remove active state from all buttons
+            videoSelectBtns.forEach(b => {
+                b.classList.remove('active-video-btn', 'bg-amber-400', 'text-gray-900', 'font-semibold');
+                b.classList.add('hover:bg-gray-700');
+            });
+
+            // Add active state to the clicked button
+            btn.classList.add('active-video-btn', 'bg-amber-400', 'text-gray-900', 'font-semibold');
+            btn.classList.remove('hover:bg-gray-700');
+
+            // Fade out the video player
+            mainVideo.style.opacity = 0;
+
+            // Wait for the fade-out, then change source and fade in
+            setTimeout(() => {
+                mainVideo.src = newSrc;
+                mainVideo.poster = newPoster;
+                mainVideo.load(); // Load the new source
+                
+                // ONLY attempt to play if there is a valid source
+                if (newSrc) {
+                    mainVideo.play().catch(e => console.error("Autoplay was prevented (this is normal in some browsers):", e));
+                } else {
+                    // Don't log an error, this is expected as src is empty
+                    console.log("No video source provided, playback skipped.");
+                }
+
+                mainVideo.style.opacity = 1; // Fade back in
+            }, 300); // Must match the CSS transition duration
         });
     });
+  }
+  
+  // --- NEW: Intersection Observer for Journey Steps ---
+  const journeySection = document.getElementById('journey-section');
+  const journeySteps = document.querySelectorAll('.journey-step');
 
+  if (journeySection && journeySteps.length > 0) {
+      const observerOptions = {
+          root: null, // viewport
+          rootMargin: '0px',
+          threshold: 0.4 // 40% of the section must be visible
+      };
+
+      const journeyObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  // Stagger the animations
+                  journeySteps.forEach((step, index) => {
+                      setTimeout(() => {
+                          step.classList.add('is-active');
+                      }, index * 400); // 400ms delay between each step
+                  });
+                  
+                  // Stop observing once it has been triggered
+                  observer.unobserve(entry.target);
+              }
+          });
+      }, observerOptions);
+
+      journeyObserver.observe(journeySection);
+  }
+
+  // --- NEW: Intersection Observer for All Sections ---
+  const sections = document.querySelectorAll('.scroll-animate-section');
+
+  if (sections.length > 0) {
+      const sectionObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  // Stop observing once it has been triggered
+                  observer.unobserve(entry.target);
+              }
+          });
+      }, { threshold: 0.3 }); // 30% of the section must be visible
+
+      sections.forEach(section => {
+          sectionObserver.observe(section);
+      });
+  }
+
+});
 </script>
 </body>
 </html>
-
